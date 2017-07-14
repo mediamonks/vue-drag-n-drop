@@ -36,8 +36,8 @@ import { DragSource } from 'vue-drag-n-drop';
 import Component from 'Component'; // import your component.
 
 const source = {
-	// Get the data that will be passed to the DropTarget once this component is dropped on one
-	// First parameter is the instance of your Component.
+    // Get the data that will be passed to the DropTarget once this component is dropped on one
+    // First parameter is the instance of your Component.
     dragData: componentInstance => ({
         data1: componentInstance.getData1(),
         data2: componentInstance.data2,
@@ -60,7 +60,7 @@ import { DropTarget } from 'vue-drag-n-drop';
 import TargetComponent from 'TargetComponent'; // import your component.
 
 const target = {
-	// Restrict what components can get dropped on the drop target.
+    // Restrict what components can get dropped on the drop target.
     canDrop(dropTarget, dragMonitor) {
         return dropTarget.id !== dragMonitor.getItem().id;
     },
