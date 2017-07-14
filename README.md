@@ -27,6 +27,17 @@ npm i -S vue-drag-n-drop
 
 ## Usage
 
+Register the plugin by running the setup function in your main js file.
+
+```ts
+    import Vuex from 'vuex';
+    import { setupDnD } from 'vue-drag-n-drop';
+	
+    const store = new Vuex.Store({ ... });
+	
+    setupDnD(store);
+```
+
 ### DragSource
 
 The drag source helper makes a component draggable. 
