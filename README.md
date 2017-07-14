@@ -6,10 +6,13 @@
 
 # vue-drag-n-drop
 
-Add a description here...
+This is a simple plugin for Vue, creating drag and drop functionality for components.
+A lot of inspiration was taken from ReactDnd, so if you're familiar with that you will have no trouble using this plugin.
 
 
 ## Installation
+
+Pretty standard procedure. Make sure you have Vue > 2 and Vuex in your project as those are dependencies of this plugin.
 
 ### yarn / npm
 
@@ -21,55 +24,86 @@ yarn add vue-drag-n-drop
 npm i -S vue-drag-n-drop
 ```
 
-### other
-
-We also have browser, amd, commonjs, umd, systemjs and es6 versions of
-this module available attached to the [Github Releases](https://github.com/mediamonks/vue-drag-n-drop/releases).
-
-<!---
-
-Note: The below cannot be used yet, as there is no way to link to a
-specific version yet without updating this readme manually after each
-new version.
-
-
-### browser
-
-```html
-<script src="http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop.min.js"></script>
-```
-```js
-console.log(window.VueDragNDrop)
-```
-
-### other
-
-Besides the browser version, there are other versions available for
-download as well:
-
-- [browser](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop.js) (and [minified](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop.min.js))
-- [umd](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop.js) (and [minified](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop-umd.min.js))
-- [amd](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop-amd.js)
-- [commonjs](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop-commonjs.js)
-- [systemjs](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop-system.js)
-- [es6](http://mediamonks-development.s3.amazonaws.com/seng/libs/vue-drag-n-drop/1.2.0/vue-drag-n-drop-es6.zip)
-
--->
-
-### manual
-
-Check the **build** section below to see your you can build for all the
-targets yourself.
 
 ## Usage
 
-```ts
-import VueDragNDrop from 'vue-drag-n-drop';
-// import VueDragNDrop from 'vue-drag-n-drop/lib/classname';
+### DragSource
 
-// do something with VueDragNDrop
+The drag source helper makes a component draggable. 
+
+```ts
+import { DragSource } from 'vue-drag-n-drop';
+import Component from 'Component'; // import your component.
+
+const source = {
+	// Get the data that will be passed to the DropTarget once this component is dropped on one
+	// First parameter is the instance of your Component.
+	dragData: componentInstance => ({
+        data1: componentInstance.getData1(),
+        data2: componentInstance.data2,
+    }),
+};
+
+// Make your Component draggable and specify a type for it.
+export default DragSource('custom_drag_component', source)(Component);
+
+// The component is now draggable and can be dropped onto DropTargets.
+
 ```
 
+### DropTarget
+
+The drop target helper makes a component a drop zone.
+
+```ts
+import { DropTarget } from 'vue-drag-n-drop';
+import TargetComponent from 'TargetComponent'; // import your component.
+
+const target = {
+	// Restrict what components can get dropped on the drop target.
+	canDrop(dropTarget, dragMonitor) {
+        return dropTarget.id !== dragMonitor.getItem().id;
+    },
+    
+    // This method is called once a drag source is dropped on the drop target.
+    drop(dropTarget, dragMonitor) {
+    	// do something
+    },
+};
+
+// Create a drop target, that will accept multiple drag source types.
+export default DropTarget(['custom_drag_component', 'other_type'], target)(TargetComponent);
+
+// The component is now a drop target.
+
+```
+
+### DragMonitor
+
+The drag monitor is used to pass information from the drag source to the drop target.
+
+It currently has 3 methods.
+
+getItem() -> Get the drag source Vue instance.
+
+getData() -> Get the data that was generated in the source contract of the drag source.
+
+getType() -> Get the type of the drag source.
+
+### Customizing the drag preview
+
+Sometimes you dont want the default browser ghost image when dragging, but rather some custom element.
+You can do that by using the dragPreview() method of the source contract of any drag source.
+
+```ts
+const source = {
+	dragData() { ... }
+	
+	dragPreview() {
+		// Here you can return any element or image (also canvas) that will then be used as the drag preview.
+	}
+}
+```
 
 ## Documentation
 
