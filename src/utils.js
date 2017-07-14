@@ -6,15 +6,15 @@
  * @returns {{}}
  */
 export const pick = (obj, keys) => {
-    const result = {};
+	const result = {};
 
-    keys.forEach((key) => {
-        if (obj[key] !== 'undefined') {
-            result[key] = obj[key];
-        }
-    });
+	keys.forEach((key) => {
+		if (obj[key] !== 'undefined') {
+			result[key] = obj[key];
+		}
+	});
 
-    return result;
+	return result;
 };
 
 /**
@@ -25,15 +25,15 @@ export const pick = (obj, keys) => {
  * @returns {{}}
  */
 export const omit = (obj, keys) => {
-    const result = {};
+	const result = {};
 
-    Object.keys(obj).forEach((key) => {
-        if (keys.indexOf(key) === -1) {
-            result[key] = obj[key];
-        }
-    });
+	Object.keys(obj).forEach((key) => {
+		if (keys.indexOf(key) === -1) {
+			result[key] = obj[key];
+		}
+	});
 
-    return result;
+	return result;
 };
 
 /**
@@ -42,7 +42,7 @@ export const omit = (obj, keys) => {
  * @param Component
  */
 export const getOptions = Component =>
-    (typeof Component === 'function' ? Component.options : Component);
+	(typeof Component === 'function' ? Component.options : Component);
 
 /**
  * Get props from Vue component.
@@ -52,7 +52,7 @@ export const getOptions = Component =>
  * @param ignorePropKeys
  */
 export const getComponentProps = (Component, propKeys, ignorePropKeys) =>
-    omit(getOptions(Component).props || {}, propKeys.concat(ignorePropKeys));
+	omit(getOptions(Component).props || {}, propKeys.concat(ignorePropKeys));
 
 /**
  * Get name of component.
@@ -60,7 +60,7 @@ export const getComponentProps = (Component, propKeys, ignorePropKeys) =>
  * @param Component
  */
 export const getComponentName = Component =>
-    getOptions(Component).name || 'anonymous-component';
+getOptions(Component).name || 'anonymous-component';
 
 /**
  * Get the base component of a wrapper component.
@@ -69,27 +69,23 @@ export const getComponentName = Component =>
  * @returns {*}
  */
 export const getBaseComponent = (wrapperComponent) => {
-    let base = wrapperComponent;
+	let base = wrapperComponent;
 
-    while (base.isWrapperComponent === true) {
-        base = base.$children[0];
-    }
+	while (base.isWrapperComponent === true) {
+		base = base.$children[0];
+	}
 
-    return base;
+	return base;
 };
 
 /**
- * Create a DnD monitor
+ * Assert method used to check correctness of values in the dnd module.
  *
- * @param type
- * @param instance
+ * @param condition
+ * @param message
  */
-export const createMonitor = (type, instance) => ({
-    getItem() {
-        return instance;
-    },
-
-    getType() {
-        return type;
-    },
-});
+export const assert = (condition, message) => {
+	if (!condition) {
+		throw new Error(message || 'Assertion failed');
+	}
+};
