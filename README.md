@@ -30,11 +30,11 @@ npm i -S vue-drag-n-drop
 Register the plugin first.
 
 ```ts
-    import VueDnD from 'vue-drag-n-drop';
+import VueDnD from 'vue-drag-n-drop';
 	
-    const store = new Vuex.Store({ ... });
-	
-    Vue.use(VueDnD, { store });
+const store = new Vuex.Store({ ... });
+
+Vue.use(VueDnD, { store });
 ```
 
 ### DragSource
