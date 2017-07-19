@@ -79,7 +79,10 @@ export default (type, source = {}) => {
 					this.isDragging = true;
 
 					e.dataTransfer.effectAllowed = 'move';
-					e.dataTransfer.setDragImage(dragImage, 0, 0);
+
+					if (dragImage) {
+						e.dataTransfer.setDragImage(dragImage, 0, 0);
+					}
 				},
 
 				/**
