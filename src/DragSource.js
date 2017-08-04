@@ -15,7 +15,6 @@ export default (type, source = {}) => {
 	 */
 	const propKeys = [
 		'isDragging',
-		'isOver',
 	];
 
 	/**
