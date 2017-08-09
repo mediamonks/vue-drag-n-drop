@@ -1,3 +1,5 @@
+import { Component } from 'vue/types';
+
 /**
  * Pick some object values from a defined set of object keys.
  *
@@ -5,8 +7,8 @@
  * @param keys
  * @returns {{}}
  */
-export const pick = (obj, keys) => {
-	const result = {};
+export const pick = (obj : object, keys : Array<string>) : object => {
+	const result : object = {};
 
 	keys.forEach((key) => {
 		if (obj[key] !== 'undefined') {
@@ -24,8 +26,8 @@ export const pick = (obj, keys) => {
  * @param keys
  * @returns {{}}
  */
-export const omit = (obj, keys) => {
-	const result = {};
+export const omit = (obj : object, keys : Array<string>) : object => {
+	const result : object = {};
 
 	Object.keys(obj).forEach((key) => {
 		if (keys.indexOf(key) === -1) {
@@ -37,30 +39,22 @@ export const omit = (obj, keys) => {
 };
 
 /**
- * Get options from a Vue component.
- *
- * @param Component
- */
-export const getOptions = Component =>
-	(typeof Component === 'function' ? Component.options : Component);
-
-/**
  * Get props from Vue component.
  *
  * @param Component
  * @param propKeys
  * @param ignorePropKeys
  */
-export const getComponentProps = (Component, propKeys, ignorePropKeys) =>
-	omit(getOptions(Component).props || {}, propKeys.concat(ignorePropKeys));
+export const getComponentProps = (Component : Component, propKeys, ignorePropKeys) : object =>
+	omit(Component.props || {}, propKeys.concat(ignorePropKeys)); // TODO: Should work
 
 /**
  * Get name of component.
  *
  * @param Component
  */
-export const getComponentName = Component =>
-getOptions(Component).name || 'anonymous-component';
+export const getComponentName = (Component : Component) : string =>
+	Component.name || 'anonymous-component'; // TODO: Should work
 
 /**
  * Get the base component of a wrapper component.
@@ -84,7 +78,7 @@ export const getBaseComponent = (wrapperComponent) => {
  * @param condition
  * @param message
  */
-export const assert = (condition, message) => {
+export const assert = (condition : boolean, message ?: string) : void => {
 	if (!condition) {
 		throw new Error(message || 'Assertion failed');
 	}

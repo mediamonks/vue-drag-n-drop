@@ -1,9 +1,13 @@
 import Vue from 'vue';
+import { Component, VNode } from 'vue/types';
 import { mapState } from 'vuex';
+import ITarget from '../lib/ITarget';
+import IMonitor from '../lib/IMonitor';
+import IVuexState from '../lib/IVuexState';
 import { pick, getComponentProps, getComponentName, getBaseComponent, assert } from './utils';
 
-export default (droppableTypes, target = {}) => {
-	const types = droppableTypes instanceof Array ? droppableTypes : [droppableTypes];
+export default (droppableTypes : string | Array<string>, target : ITarget = {}) : Component => {
+	const types : Array<string> = droppableTypes instanceof Array ? droppableTypes : [<string>droppableTypes];
 
 	assert(types instanceof Array, `[VueDnD] Droppable types must either be string or array, '${typeof types}' given`);
 	assert(typeof target === 'object', `[VueDnD] Target must be an object, '${typeof target}' given`);
@@ -33,9 +37,9 @@ export default (droppableTypes, target = {}) => {
 	 * @param dropTarget
 	 * @param dragMonitor
 	 */
-	const canDrop = (dropTarget, dragMonitor) =>
-	types.findIndex(t => t === dragMonitor.getType()) !== -1
-	&& (typeof target.canDrop === 'function' ? target.canDrop(dropTarget, dragMonitor) : true);
+	const canDrop = (dropTarget : Component, dragMonitor : IMonitor) : boolean =>
+		types.indexOf(dragMonitor.getType()) !== -1
+			&& (typeof target.canDrop === 'function' ? target.canDrop(dropTarget, dragMonitor) : true);
 
 	/**
 	 * Handle the drop of the DragSource on this DropTarget.
@@ -43,7 +47,7 @@ export default (droppableTypes, target = {}) => {
 	 * @param dropTarget
 	 * @param dragMonitor
 	 */
-	const handleDrop = (dropTarget, dragMonitor) => {
+	const handleDrop = (dropTarget : Component, dragMonitor : IMonitor) : void => {
 		if (canDrop(dropTarget, dragMonitor) && typeof target.drop === 'function') {
 			target.drop(dropTarget, dragMonitor);
 		}
@@ -76,11 +80,11 @@ export default (droppableTypes, target = {}) => {
 				this.isWrapperComponent = true;
 			},
 
-			computed: mapState('dnd', {
+			computed: mapState({
 				// get the current drag monitor from the store.
-				dragMonitor: state => state.monitor,
+				dragMonitor: (state : IVuexState) => state.dnd.monitor,
 
-				isDragInProgress: state => state.dragging,
+				isDragInProgress: (state : IVuexState) => state.dnd.dragging,
 			}),
 
 			methods: {
@@ -89,7 +93,7 @@ export default (droppableTypes, target = {}) => {
 				 *
 				 * @param e
 				 */
-				handleDragEnter(e) {
+				handleDragEnter(e : DragEvent) : boolean {
 					e.preventDefault();
 
 					if (this.isDragInProgress) {
@@ -104,7 +108,7 @@ export default (droppableTypes, target = {}) => {
 				 *
 				 * @param e
 				 */
-				handleDragLeave(e) {
+				handleDragLeave(e : DragEvent) : boolean {
 					e.preventDefault();
 
 					if (this.isDragInProgress) {
@@ -119,7 +123,7 @@ export default (droppableTypes, target = {}) => {
 				 *
 				 * @param e
 				 */
-				handleDrop(e) {
+				handleDrop(e : DragEvent) : boolean {
 					e.stopPropagation();
 
 					if (this.isDragInProgress) {
@@ -137,7 +141,7 @@ export default (droppableTypes, target = {}) => {
 				 * @param e
 				 * @returns {boolean}
 				 */
-				handleDragOver(e) {
+				handleDragOver(e : DragEvent) : boolean {
 					e.preventDefault();
 
 					if (this.isDragInProgress && canDrop(getBaseComponent(this), this.dragMonitor)) {
@@ -156,7 +160,7 @@ export default (droppableTypes, target = {}) => {
 			 * @param h
 			 * @returns {*}
 			 */
-			render(h) {
+			render(h) : VNode {
 				return h(name, {
 					props: pick(this, Object.keys(componentProps).concat(propKeys)),
 

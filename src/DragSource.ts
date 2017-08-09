@@ -1,9 +1,13 @@
 import Vue from 'vue';
+import { Component } from 'vue/types';
 import { mapActions } from 'vuex';
 import createMonitor from './createMonitor';
 import { pick, getComponentProps, getComponentName, getBaseComponent, assert } from './utils';
 
-export default (type, source = {}) => {
+import ISource from '../lib/ISource';
+import IDragSource from "../lib/IDragSource";
+
+export default (type : string, source : ISource = {}) : IDragSource => {
 	assert(typeof type === 'string', `[VueDnD] Type must be a string, '${typeof type}' given`);
 	assert(typeof source === 'object', `[VueDnD] Source must be an object, '${typeof source}' given`);
 	assert(!(source instanceof Array), '[VueDnD] Source cannot be an array.');
@@ -13,9 +17,8 @@ export default (type, source = {}) => {
 	 *
 	 * @type {[*]}
 	 */
-	const propKeys = [
+	const propKeys : Array<string> = [
 		'isDragging',
-		'isOver',
 	];
 
 	/**
@@ -23,12 +26,12 @@ export default (type, source = {}) => {
 	 *
 	 * @type {[*]}
 	 */
-	const ignorePropKeys = [];
+	const ignorePropKeys : Array<string> = [];
 
 	/**
 	 * Constructs a wrapper component around the component that was passed into the function.
 	 */
-	return (Component) => {
+	return (Component : Component) : IDragSource => {
 		const name = getComponentName(Component);
 		const componentProps = getComponentProps(Component, propKeys, ignorePropKeys);
 
@@ -58,9 +61,9 @@ export default (type, source = {}) => {
 			},
 
 			methods: {
-				...mapActions('dnd', {
-					startDragging: 'startDragging',
-					stopDragging: 'stopDragging',
+				...mapActions({
+					startDragging: 'dnd/startDragging',
+					stopDragging: 'dnd/stopDragging',
 				}),
 
 				/**
@@ -115,6 +118,6 @@ export default (type, source = {}) => {
 					},
 				});
 			},
-		});
+		}) as IDragSource;
 	};
 };
