@@ -1,12 +1,15 @@
-import Vue from 'vue';
-import { Component, VNode } from 'vue/types';
+import Vue, { ComponentOptions, VNode, CreateElement } from 'vue';
 import { mapState } from 'vuex';
 import ITarget from '../lib/ITarget';
 import IMonitor from '../lib/IMonitor';
 import IVuexState from '../lib/IVuexState';
+import IDropTarget from '../lib/IDropTarget';
 import { pick, getComponentProps, getComponentName, getBaseComponent, assert } from './utils';
 
-export default (droppableTypes : string | Array<string>, target : ITarget = {}) : Component => {
+export default (
+		droppableTypes : string | Array<string>,
+		target : ITarget = {},
+	): (Component : ComponentOptions<Vue>) => IDropTarget => {
 	const types : Array<string> = droppableTypes instanceof Array ? droppableTypes : [<string>droppableTypes];
 
 	assert(types instanceof Array, `[VueDnD] Droppable types must either be string or array, '${typeof types}' given`);
@@ -37,7 +40,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 	 * @param dropTarget
 	 * @param dragMonitor
 	 */
-	const canDrop = (dropTarget : Component, dragMonitor : IMonitor) : boolean =>
+	const canDrop = (dropTarget : ComponentOptions<Vue>, dragMonitor : IMonitor) : boolean =>
 		types.indexOf(dragMonitor.getType()) !== -1
 			&& (typeof target.canDrop === 'function' ? target.canDrop(dropTarget, dragMonitor) : true);
 
@@ -47,7 +50,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 	 * @param dropTarget
 	 * @param dragMonitor
 	 */
-	const handleDrop = (dropTarget : Component, dragMonitor : IMonitor) : void => {
+	const handleDrop = (dropTarget : ComponentOptions<Vue>, dragMonitor : IMonitor) : void => {
 		if (canDrop(dropTarget, dragMonitor) && typeof target.drop === 'function') {
 			target.drop(dropTarget, dragMonitor);
 		}
@@ -56,11 +59,11 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 	/**
 	 * Constructs a wrapper component around the component that was passed into the function.
 	 */
-	return (Component) => {
+	return (Component : ComponentOptions<Vue>) : IDropTarget => {
 		const name = getComponentName(Component);
 		const componentProps = getComponentProps(Component, propKeys, ignorePropKeys);
 
-		return Vue.extend({
+		const options : ComponentOptions<Vue> = {
 			name: `DropTarget-${name}`,
 
 			props: componentProps,
@@ -75,7 +78,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 				};
 			},
 
-			created() {
+			created(this: IDropTarget) {
 				// used to identify the wrapper component as such
 				this.isWrapperComponent = true;
 			},
@@ -93,7 +96,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 				 *
 				 * @param e
 				 */
-				handleDragEnter(e : DragEvent) : boolean {
+				handleDragEnter(this: IDropTarget, e : DragEvent) : boolean {
 					e.preventDefault();
 
 					if (this.isDragInProgress) {
@@ -108,7 +111,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 				 *
 				 * @param e
 				 */
-				handleDragLeave(e : DragEvent) : boolean {
+				handleDragLeave(this: IDropTarget, e : DragEvent) : boolean {
 					e.preventDefault();
 
 					if (this.isDragInProgress) {
@@ -123,7 +126,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 				 *
 				 * @param e
 				 */
-				handleDrop(e : DragEvent) : boolean {
+				handleDrop(this: IDropTarget, e : DragEvent) : boolean {
 					e.stopPropagation();
 
 					if (this.isDragInProgress) {
@@ -141,7 +144,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 				 * @param e
 				 * @returns {boolean}
 				 */
-				handleDragOver(e : DragEvent) : boolean {
+				handleDragOver(this: IDropTarget, e : DragEvent) : boolean {
 					e.preventDefault();
 
 					if (this.isDragInProgress && canDrop(getBaseComponent(this), this.dragMonitor)) {
@@ -152,7 +155,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 
 					return false;
 				},
-			},
+			} as { [key: string] : any},
 
 			/**
 			 * Render the wrapped component as the only child component.
@@ -160,7 +163,7 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 			 * @param h
 			 * @returns {*}
 			 */
-			render(h) : VNode {
+			render(this: IDropTarget, h: CreateElement) : VNode {
 				return h(name, {
 					props: pick(this, Object.keys(componentProps).concat(propKeys)),
 
@@ -172,6 +175,8 @@ export default (droppableTypes : string | Array<string>, target : ITarget = {}) 
 					},
 				});
 			},
-		});
+		};
+
+		return Vue.extend(options);
 	};
 };

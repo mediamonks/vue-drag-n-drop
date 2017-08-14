@@ -1,4 +1,4 @@
-import { Component } from 'vue/types';
+import Vue, { ComponentOptions, PropOptions } from 'vue';
 
 /**
  * Pick some object values from a defined set of object keys.
@@ -7,8 +7,8 @@ import { Component } from 'vue/types';
  * @param keys
  * @returns {{}}
  */
-export const pick = (obj : object, keys : Array<string>) : object => {
-	const result : object = {};
+export const pick = (obj : Object, keys : Array<string>) : Object => {
+	const result : Object = {};
 
 	keys.forEach((key) => {
 		if (obj[key] !== 'undefined') {
@@ -26,8 +26,8 @@ export const pick = (obj : object, keys : Array<string>) : object => {
  * @param keys
  * @returns {{}}
  */
-export const omit = (obj : object, keys : Array<string>) : object => {
-	const result : object = {};
+export const omit = (obj : Object, keys : Array<string>) : Object => {
+	const result : Object = {};
 
 	Object.keys(obj).forEach((key) => {
 		if (keys.indexOf(key) === -1) {
@@ -45,16 +45,17 @@ export const omit = (obj : object, keys : Array<string>) : object => {
  * @param propKeys
  * @param ignorePropKeys
  */
-export const getComponentProps = (Component : Component, propKeys, ignorePropKeys) : object =>
-	omit(Component.props || {}, propKeys.concat(ignorePropKeys)); // TODO: Should work
+export const getComponentProps =
+	(Component : ComponentOptions<Vue>, propKeys, ignorePropKeys) : { [key: string]: PropOptions } =>
+	omit(Component.props || {}, propKeys.concat(ignorePropKeys)) as { [key: string]: PropOptions };
 
 /**
  * Get name of component.
  *
  * @param Component
  */
-export const getComponentName = (Component : Component) : string =>
-	Component.name || 'anonymous-component'; // TODO: Should work
+export const getComponentName = (Component : ComponentOptions<Vue>) : string =>
+	Component.name || 'anonymous-component';
 
 /**
  * Get the base component of a wrapper component.

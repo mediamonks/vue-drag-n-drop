@@ -1,13 +1,13 @@
-import Vue from 'vue';
-import { Component } from 'vue/types';
+import Vue, { ComponentOptions } from 'vue';
 import { mapActions } from 'vuex';
 import createMonitor from './createMonitor';
 import { pick, getComponentProps, getComponentName, getBaseComponent, assert } from './utils';
 
 import ISource from '../lib/ISource';
-import IDragSource from "../lib/IDragSource";
+import IDragSource, { IDragSourceData } from '../lib/IDragSource';
+import { CreateElement } from 'vue/types/vue';
 
-export default (type : string, source : ISource = {}) : IDragSource => {
+export default (type : string, source : ISource = {}) : (Component : ComponentOptions<Vue>) => IDragSource => {
 	assert(typeof type === 'string', `[VueDnD] Type must be a string, '${typeof type}' given`);
 	assert(typeof source === 'object', `[VueDnD] Source must be an object, '${typeof source}' given`);
 	assert(!(source instanceof Array), '[VueDnD] Source cannot be an array.');
@@ -31,11 +31,11 @@ export default (type : string, source : ISource = {}) : IDragSource => {
 	/**
 	 * Constructs a wrapper component around the component that was passed into the function.
 	 */
-	return (Component : Component) : IDragSource => {
-		const name = getComponentName(Component);
+	return (Component : ComponentOptions<Vue>) : IDragSource => {
+		const name : string = getComponentName(Component);
 		const componentProps = getComponentProps(Component, propKeys, ignorePropKeys);
 
-		return Vue.extend({
+		const options = {
 			name: `DragSource-${name}`,
 
 			props: componentProps,
@@ -44,17 +44,17 @@ export default (type : string, source : ISource = {}) : IDragSource => {
 				[name]: Component,
 			},
 
-			data() {
+			data(this: IDragSource) : IDragSourceData {
 				return {
 					isDragging: false,
 				};
 			},
 
-			created() {
+			created(this: IDragSource) {
 				this.isWrapperComponent = true;
 			},
 
-			beforeDestroy() {
+			beforeDestroy(this: IDragSource) {
 				if (this.isDragging) {
 					this.handleDragEnd();
 				}
@@ -71,7 +71,7 @@ export default (type : string, source : ISource = {}) : IDragSource => {
 				 *
 				 * @param e
 				 */
-				handleDragStart(e) {
+				handleDragStart(this: IDragSource, e) {
 					const base = getBaseComponent(this);
 
 					const dragData = typeof source.dragData === 'function' ? source.dragData(base) : null;
@@ -91,7 +91,7 @@ export default (type : string, source : ISource = {}) : IDragSource => {
 				/**
 				 * Handle the dragend event on the wrapped component.
 				 */
-				handleDragEnd() {
+				handleDragEnd(this: IDragSource) {
 					this.stopDragging();
 
 					this.isDragging = false;
@@ -104,7 +104,7 @@ export default (type : string, source : ISource = {}) : IDragSource => {
 			 * @param h
 			 * @returns {*}
 			 */
-			render(h) {
+			render(this: IDragSource, h: CreateElement) {
 				return h(name, {
 					props: pick(this, Object.keys(componentProps).concat(propKeys)),
 
@@ -118,6 +118,8 @@ export default (type : string, source : ISource = {}) : IDragSource => {
 					},
 				});
 			},
-		}) as IDragSource;
+		};
+
+		return Vue.extend(options);
 	};
 };
