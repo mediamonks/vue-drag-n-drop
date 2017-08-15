@@ -1,3 +1,6 @@
+import Vue from 'vue';
+import IMonitor from '../lib/IMonitor';
+
 /**
  * Create a DnD monitor
  *
@@ -5,7 +8,7 @@
  * @param instance
  * @param data
  */
-const createMonitor = (type, instance, data = null) => ({
+const createMonitor = (type : string, instance : Vue, data : any = null) : IMonitor => ({
     /**
      * Return the component (VueInstance) that was dragged.
      *
@@ -21,7 +24,7 @@ const createMonitor = (type, instance, data = null) => ({
      * @returns {*}
      */
     getType() {
-        return type;
+    	return type;
     },
 
     /**

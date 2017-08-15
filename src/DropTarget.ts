@@ -9,7 +9,7 @@ import { pick, getComponentProps, getComponentName, getBaseComponent, assert } f
 export default (
 		droppableTypes : string | Array<string>,
 		target : ITarget = {},
-	): (Component : ComponentOptions<Vue>) => IDropTarget => {
+	): (Component : ComponentOptions<Vue>) => ComponentOptions<Vue> => {
 	const types : Array<string> = droppableTypes instanceof Array ? droppableTypes : [<string>droppableTypes];
 
 	assert(types instanceof Array, `[VueDnD] Droppable types must either be string or array, '${typeof types}' given`);
@@ -59,7 +59,7 @@ export default (
 	/**
 	 * Constructs a wrapper component around the component that was passed into the function.
 	 */
-	return (Component : ComponentOptions<Vue>) : IDropTarget => {
+	return (Component : ComponentOptions<Vue>) : ComponentOptions<Vue> => {
 		const name = getComponentName(Component);
 		const componentProps = getComponentProps(Component, propKeys, ignorePropKeys);
 
@@ -177,6 +177,6 @@ export default (
 			},
 		};
 
-		return Vue.extend(options);
+		return Vue.extend(options) as ComponentOptions<Vue>;
 	};
 };

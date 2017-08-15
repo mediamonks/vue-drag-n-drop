@@ -7,7 +7,7 @@ import ISource from '../lib/ISource';
 import IDragSource, { IDragSourceData } from '../lib/IDragSource';
 import { CreateElement } from 'vue/types/vue';
 
-export default (type : string, source : ISource = {}) : (Component : ComponentOptions<Vue>) => IDragSource => {
+export default (type : string, source : ISource = {}) : (Component : ComponentOptions<Vue>) => ComponentOptions<Vue> => {
 	assert(typeof type === 'string', `[VueDnD] Type must be a string, '${typeof type}' given`);
 	assert(typeof source === 'object', `[VueDnD] Source must be an object, '${typeof source}' given`);
 	assert(!(source instanceof Array), '[VueDnD] Source cannot be an array.');
@@ -31,7 +31,7 @@ export default (type : string, source : ISource = {}) : (Component : ComponentOp
 	/**
 	 * Constructs a wrapper component around the component that was passed into the function.
 	 */
-	return (Component : ComponentOptions<Vue>) : IDragSource => {
+	return (Component : ComponentOptions<Vue>) : ComponentOptions<Vue> => {
 		const name : string = getComponentName(Component);
 		const componentProps = getComponentProps(Component, propKeys, ignorePropKeys);
 
@@ -120,6 +120,6 @@ export default (type : string, source : ISource = {}) : (Component : ComponentOp
 			},
 		};
 
-		return Vue.extend(options);
+		return Vue.extend(options) as ComponentOptions<Vue>;
 	};
 };
