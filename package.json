@@ -1,6 +1,6 @@
 {
   "name": "vue-drag-n-drop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Boilerplate and example project for all Seng projects",
   "main": "index.js",
   "scripts": {
