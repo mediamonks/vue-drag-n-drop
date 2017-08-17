@@ -3,11 +3,12 @@ import { mapActions } from 'vuex';
 import createMonitor from './createMonitor';
 import { pick, getComponentProps, getComponentName, getBaseComponent, assert } from './utils';
 
-import ISource from '../lib/ISource';
-import IDragSource, { IDragSourceData } from '../lib/IDragSource';
+import ISource from './ISource';
+import IDragSource, { IDragSourceData } from './IDragSource';
 import { CreateElement } from 'vue/types/vue';
 
-export default (type : string, source : ISource = {}) : (Component : ComponentOptions<Vue>) => ComponentOptions<Vue> => {
+export default (type : string, source : ISource = {}) : (Component : ComponentOptions<Vue>) =>
+	ComponentOptions<Vue> => {
 	assert(typeof type === 'string', `[VueDnD] Type must be a string, '${typeof type}' given`);
 	assert(typeof source === 'object', `[VueDnD] Source must be an object, '${typeof source}' given`);
 	assert(!(source instanceof Array), '[VueDnD] Source cannot be an array.');

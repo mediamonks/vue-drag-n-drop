@@ -3,7 +3,7 @@ import { Vue } from 'vue/types/vue';
 import dragSource from './DragSource';
 import dropTarget from './DropTarget';
 import storeModule from './storeModule';
-import IVuexState from '../lib/IVuexState';
+import IVuexState from './IVuexState';
 
 interface IOptions {
 	store : Store<IVuexState>;

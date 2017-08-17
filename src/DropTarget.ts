@@ -1,9 +1,9 @@
 import Vue, { ComponentOptions, VNode, CreateElement } from 'vue';
 import { mapState } from 'vuex';
-import ITarget from '../lib/ITarget';
-import IMonitor from '../lib/IMonitor';
-import IVuexState from '../lib/IVuexState';
-import IDropTarget from '../lib/IDropTarget';
+import ITarget from './ITarget';
+import IMonitor from './IMonitor';
+import IVuexState from './IVuexState';
+import IDropTarget from './IDropTarget';
 import { pick, getComponentProps, getComponentName, getBaseComponent, assert } from './utils';
 
 export default (
