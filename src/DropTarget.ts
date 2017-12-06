@@ -128,6 +128,7 @@ export default (
 				 */
 				handleDrop(this: IDropTarget, e : DragEvent) : boolean {
 					e.stopPropagation();
+					e.preventDefault();
 
 					if (this.isDragInProgress) {
 						handleDrop(getBaseComponent(this), this.dragMonitor);
