@@ -1,7 +1,7 @@
 {
   "name": "vue-drag-n-drop",
-  "version": "1.0.1",
-  "description": "Boilerplate and example project for all Seng projects",
+  "version": "1.0.2",
+  "description": "Vue Drag n Drop plugin inspired by react-dnd",
   "main": "index.js",
   "scripts": {
     "prepublish": "npm run build:npm",
